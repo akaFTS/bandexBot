@@ -29,3 +29,12 @@
 {"type":"message","text":"/about","user":"akafts","level":"info","message":"","timestamp":"2017-12-15T22:37:36.290Z"}
 {"type":"command","action":"ABOUT","user":"akafts","level":"info","message":"","timestamp":"2017-12-15T22:40:49.279Z"}
 {"type":"command","action":"BACK_INITIAL","user":"akafts","level":"info","message":"","timestamp":"2017-12-15T22:40:55.589Z"}
+{"type":"command","action":"BNDLIST_ALMOCO_0","level":"info","message":"","timestamp":"2017-12-15T23:05:00.145Z"}
+{"type":"command","action":"BNDFULL_ALMOCO_CENTRAL","level":"info","message":"","timestamp":"2017-12-15T23:05:07.309Z"}
+{"type":"command","action":"BNDLIST_ALMOCO_0","level":"info","message":"","timestamp":"2017-12-15T23:05:14.024Z"}
+{"type":"command","action":"BNDFULL_ALMOCO_FISICA","level":"info","message":"","timestamp":"2017-12-15T23:05:15.869Z"}
+{"type":"command","action":"DUPE_BNDLIST_ALMOCO_0","level":"info","message":"","timestamp":"2017-12-15T23:05:44.387Z"}
+{"type":"command","action":"BNDFULL_ALMOCO_PREFEITURA","level":"info","message":"","timestamp":"2017-12-15T23:05:46.354Z"}
+{"type":"command","action":"DUPE_BNDLIST_ALMOCO_0","level":"info","message":"","timestamp":"2017-12-15T23:05:51.813Z"}
+{"type":"command","action":"BNDFULL_ALMOCO_QUIMICA","level":"info","message":"","timestamp":"2017-12-15T23:05:53.228Z"}
+{"type":"command","action":"BNDLIST_ALMOCO_0","level":"info","message":"","timestamp":"2017-12-15T23:06:46.913Z"}

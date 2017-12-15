@@ -29,7 +29,7 @@ cardapios.precache().then(() => {
 bot.on('message', (msg) => {
 
     comm = mensagens.prepare(mensagens.INITIAL);
-    bot.sendMessage(msg.chat.id, comm.text, comm.opts);
+    bot.sendMessage(msg.chat.id, comm.text, comm.opts).catch(handleError);
 });
 
 //interpretar respostas do teclado interativo
@@ -37,7 +37,10 @@ bot.on('callback_query', function onCallbackQuery(callbackQuery) {
     let action = callbackQuery.data;
     let msg = callbackQuery.message;
     let noEdit = false;
-    winston.info({type: "command", action: action, user: msg.chat.username});
+
+    console.log(msg);
+
+    winston.info({action: action, user: msg.chat.username});
 
     //pra voltar pro anterior sempre começa com back 
     if(action.startsWith("BACK")) {
@@ -68,7 +71,13 @@ bot.on('callback_query', function onCallbackQuery(callbackQuery) {
     }
 
     if(noEdit)
-        bot.sendMessage(msg.chat.id, comm.text, comm.opts);
+        bot.sendMessage(msg.chat.id, comm.text, comm.opts).catch(handleError);
     else
-        bot.editMessageText(comm.text, comm.opts);
+        bot.editMessageText(comm.text, comm.opts).catch(handleError);
 });
+
+//tratar erros
+bot.on('polling_error', handleError);
+function handleError(error) {
+    console.log(error);
+}
