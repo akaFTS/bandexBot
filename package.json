@@ -20,6 +20,8 @@
     "axios": "^0.17.0",
     "cheerio": "^1.0.0-rc.2",
     "moment": "^2.19.1",
-    "node-telegram-bot-api": "^0.29.0"
+    "node-telegram-bot-api": "^0.29.0",
+    "q": "^1.5.1",
+    "winston": "^2.4.0"
   }
 }

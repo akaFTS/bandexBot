@@ -7,81 +7,83 @@
 const TelegramBot = require('node-telegram-bot-api');
 const axios = require('axios');
 const moment = require('moment');
+const cardapios = require('./cardapios');
+const mensagens = require('./mensagens');
+const winston = require('winston');
+
+
+let token = "509006825:AAGd3FWC3cSQnWm7-WYZxfeSMxGhukLnlaM";
+let bot = new TelegramBot(token, { polling: true });
+winston.add(winston.transports.File, { filename: 'log.txt' });
 moment.locale('pt-br');
 
-var token = "455589560:AAE6jITx0Ax-27SFmvUcqLUTQS46EuSsffo";
+//SETUP INICIAL
 
-var bot = new TelegramBot(token, {polling: true});
-
-bot.on('message', (msg) => {
-    
-    let tindex = moment().format('d') - 1;
-    let today = moment().format('dddd');
-    
-    if(msg.text.indexOf('/almoco') === 0) {
-
-        let comidas = cardapio[tindex * 2].cdpdia.split('<br>');
-
-        let text = `🍱 CARDÁPIO DE HOJE (${today} - Almoço) 🍱
-
-           🍚 ${comidas[0]}
-           🍗 ${comidas[1]}
-           🌿 ${comidas[2]}
-           🍠 ${comidas[3]}
-           🥗 ${comidas[4]}
-           🎂 ${comidas[5]}
-           🍞 ${comidas[6]}
-
-        🔭 Restaurante da Física`;
-        bot.sendMessage(msg.chat.id, text);        
-    }
-    else if(msg.text.indexOf('/janta') === 0) {
-
-        let comidas = cardapio[tindex * 2 + 1].cdpdia.split('<br>');
-
-        let text = `🍱 CARDÁPIO DE HOJE (${today} - Janta) 🍱
-
-           🍚 ${comidas[0]}
-           🍗 ${comidas[1]}
-           🌿 ${comidas[2]}
-           🍠 ${comidas[3]}
-           🥗 ${comidas[4]}
-           🎂 ${comidas[5]}
-           🍞 ${comidas[6]}
-
-        🔭 Restaurante da Física`;
-        bot.sendMessage(msg.chat.id, text);        
-    }
-    
+console.log("Server up!");
+console.log("Precaching menus...");
+cardapios.precache().then(() => {
+    console.log("Menus precached.");
 });
 
+//ao receber uma mensagem
+bot.on('message', (msg) => {
 
-// 8 -> fisica
-// 9 -> quimica
-// 7 -> prefeitura
-// 6 -> central
+    winston.info(`MSG: ${msg.text} | ${msg.from.username}`);
 
-//parametros da API do bandex
-var params = `callCount=1\n
-windowName=\n
-nextReverseAjaxIndex=0\n
-c0-scriptName=CardapioControleDWR\n
-c0-methodName=obterCardapioRestUSP\n
-c0-id=0\n
-c0-param0=string:8\n
-batchId=1\n
-instanceId=0\n
-page=%2Frucard%2FJsp%2FcardapioSAS.jsp%3Fcodrtn%3D8\n
-scriptSessionId=qEqk7ItaLEzxe*E*86DiBQhKpZl/hKILpZl-dc3rvbwx5`;
+    //mensagem de \about
+    if (/^\/about$/.test(msg.text)) {
+        let text = `BandexBot criado por Gustavo Silva no IME-USP
+Curtiu? Repasse pros amigos!
 
-var cardapio;
+Versão: 0.1`;
 
-axios.post('https://uspdigital.usp.br/rucard/dwr/call/plaincall/CardapioControleDWR.obterCardapioRestUSP.dwr', params)
-  .then(response => {
+        bot.sendMessage(msg.chat.id, text);
+    }
 
-    var json_doidao = response.data;
-    var json_normal = json_doidao.split('\n').slice(6).join('\n').replace('dwr.engine.remote.handleCallback("1","0",', "").replace("})();", "").trim().replace(");", "")
-    var json_melhor = json_normal.replace(/([\[{,])([a-z][a-z0-9]+):/g, "$1\"$2\":");
+    //qualquer outro texto 
+    else {
+        comm = mensagens.prepare(mensagens.INITIAL);
+        bot.sendMessage(msg.chat.id, comm.text, comm.opts);
+    }
+});
 
-    cardapio = JSON.parse(json_melhor);
-  })
+//interpretar respostas do teclado interativo
+bot.on('callback_query', function onCallbackQuery(callbackQuery) {
+    let action = callbackQuery.data;
+    let msg = callbackQuery.message;
+    let noEdit = false;
+    winston.info(`COMM: ${action} | ${msg.chat.username}`);
+
+    //pra voltar pro anterior sempre começa com back 
+    if(action.startsWith("BACK")) {
+        action = action.split(/_(.+)/)[1]; //regex para splitar apenas no primeiro "_"
+    }
+    //se for pra voltar pro anterior mas preservando a mensagem atual, é dupe
+    else if(action.startsWith("DUPE")) {
+        action = action.split(/_(.+)/)[1];
+        noEdit = true;
+    }
+
+
+    //listagem de bandejões para almoço/janta, passamos como parametro
+    //qual dos dois é e qual a pagina da lista de bandejões
+    if(action.startsWith("BNDLIST")) {
+        let splitter = action.split("_");
+        comm = mensagens.prepareForEdit(mensagens["BNDLIST"], msg, {time: splitter[1], page: splitter[2]});
+    }
+
+    //pedido de cardapio, passamos como parametro
+    //se é almoco/janta e qual bandex
+    else if(action.startsWith("BNDFULL")) {
+        let splitter = action.split("_");
+        comm = mensagens.prepareForEdit(mensagens["BNDFULL"], msg, {time: splitter[1], place: splitter[2]});
+    }
+    else {
+        comm = mensagens.prepareForEdit(mensagens[action], msg);
+    }
+
+    if(noEdit)
+        bot.sendMessage(msg.chat.id, comm.text, comm.opts);
+    else
+        bot.editMessageText(comm.text, comm.opts);
+});
