@@ -1,1 +1,0 @@
-{"level":"info","message":"COMM: BNDLIST_ALMOCO_0 | akafts","timestamp":"2017-12-15T22:12:08.874Z"}

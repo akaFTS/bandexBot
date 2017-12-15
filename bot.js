@@ -28,7 +28,7 @@ cardapios.precache().then(() => {
 //ao receber uma mensagem
 bot.on('message', (msg) => {
 
-    winston.info(`MSG: ${msg.text} | ${msg.from.username}`);
+    winston.info({type: "message", text: msg.text, user: msg.chat.username});
 
     //mensagem de \about
     if (/^\/about$/.test(msg.text)) {
@@ -52,7 +52,7 @@ bot.on('callback_query', function onCallbackQuery(callbackQuery) {
     let action = callbackQuery.data;
     let msg = callbackQuery.message;
     let noEdit = false;
-    winston.info(`COMM: ${action} | ${msg.chat.username}`);
+    winston.info({type: "command", action: action, user: msg.chat.username});
 
     //pra voltar pro anterior sempre começa com back 
     if(action.startsWith("BACK")) {
