@@ -1,6 +1,7 @@
 const cardapios = require('./cardapios');
 
 var self = module.exports = {
+    ABOUT: 0,
     INITIAL: 1,
     NOTIFICATIONS: 2,
     BNDLIST: 3,
@@ -16,7 +17,26 @@ function prepare(index, params) {
     wrapper.opts.parse_mode = "Markdown";
     wrapper.opts.reply_markup = {};
 
-    if (index == self.INITIAL) {
+    if(index == self.ABOUT) {
+        wrapper.text = `🔹            *BandexBot  v0.8*            🔹
+🔹 by @akafts and USPCodeLab at *IME-USP* 🔹
+
+🖥 Quer fazer sistemas como este? Participe do *USPCodeLab*!
+🌎 Código disponível no meu GitHub (@akafts)
+
+👍 *Curtiu? Repasse pros amigos!* 👍
+`;
+        wrapper.opts.reply_markup.inline_keyboard = [
+            [
+                {
+                    text: '⬅️ Voltar',
+                    callback_data: 'DUPE_INITIAL'
+                }
+            ]
+        ];         
+    }
+
+    if(index == self.INITIAL) {
         wrapper.text = `*Bem-vindo ao BandexBot!* Em que posso ajudar?`;
         wrapper.opts.reply_markup.inline_keyboard = [
             [
@@ -33,6 +53,12 @@ function prepare(index, params) {
                 {
                     text: '⚙️ Gerenciar Notificações',
                     callback_data: 'NOTIFICATIONS'
+                }
+            ],
+            [
+                {
+                    text: 'ℹ️ Sobre o BandexBot',
+                    callback_data: 'ABOUT'
                 }
             ]
         ];

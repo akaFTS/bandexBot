@@ -25,26 +25,11 @@ cardapios.precache().then(() => {
     console.log("Menus precached.");
 });
 
-//ao receber uma mensagem
+//ao receber qualquer mensagem
 bot.on('message', (msg) => {
 
-    winston.info({type: "message", text: msg.text, user: msg.chat.username});
-
-    //mensagem de \about
-    if (/^\/about$/.test(msg.text)) {
-        let text = `BandexBot criado por Gustavo Silva no IME-USP
-Curtiu? Repasse pros amigos!
-
-Versão: 0.1`;
-
-        bot.sendMessage(msg.chat.id, text);
-    }
-
-    //qualquer outro texto 
-    else {
-        comm = mensagens.prepare(mensagens.INITIAL);
-        bot.sendMessage(msg.chat.id, comm.text, comm.opts);
-    }
+    comm = mensagens.prepare(mensagens.INITIAL);
+    bot.sendMessage(msg.chat.id, comm.text, comm.opts);
 });
 
 //interpretar respostas do teclado interativo
