@@ -1,33 +1,46 @@
 const moment = require('moment');
 const axios = require('axios');
 const Q = require("q");
+const { CronJob } = require("cron");
 const bandejoes = require('./bandejoes');
 let curdate;
 let menus;
 
 module.exports = {
-    precache: precache,
+    setupCaching: setupCaching,
     getBandexList: getBandexList,
     fetch: fetch
 };
 
+//faz um caching inicial e configura o cron pra fazer todo dia
+function setupCaching() {
+    cache();
+    new CronJob({
+        cronTime: "00 30 00 * * *", //toda meia-noite e meia de todo dia
+        start: true,
+        onTick: cache
+    });
+}
+
 //baixa informações de todos os bandejões para o dia de hoje e armazena em cache
 //retorna uma promise que é resolvida quando toda a info estiver disponivel
-function precache() {
+function cache() {
+    
     //só cacheia de novo se for outro dia
     if(isCacheValid())
         return;
     curdate = moment();
 
+
     menus = [];
     let promises = [];
+    console.log("Started caching menus...");
     Object.keys(bandejoes.codes).forEach(key => {
         let index = bandejoes.codes[key];
         let prom = getTodayMenu(index).then(entry => {
             menus[index] = entry;
-            console.log("Got menu for " + key);
         }, error => {
-            console.log("something bad happened at " + key);
+            console.log("Something bad happened at " + key);
             console.log(error);
         })
 
@@ -35,7 +48,9 @@ function precache() {
         promises.push(prom);
     });
 
-    return Q.all(promises);
+    Q.all(promises).then(() => {
+        console.log("Menus cached successfully.");
+    });
 }
 
 //busca o menu de hoje de um determinado bandex

@@ -7,10 +7,9 @@
 const TelegramBot = require('node-telegram-bot-api');
 const axios = require('axios');
 const moment = require('moment');
+const winston = require('winston');
 const cardapios = require('./cardapios');
 const mensagens = require('./mensagens');
-const winston = require('winston');
-
 
 let token = "509006825:AAGd3FWC3cSQnWm7-WYZxfeSMxGhukLnlaM";
 let bot = new TelegramBot(token, { polling: true });
@@ -18,12 +17,8 @@ winston.add(winston.transports.File, { filename: 'log.txt' });
 moment.locale('pt-br');
 
 //SETUP INICIAL
-
 console.log("Server up!");
-console.log("Precaching menus...");
-cardapios.precache().then(() => {
-    console.log("Menus precached.");
-});
+cardapios.setupCaching();
 
 //ao receber qualquer mensagem
 bot.on('message', (msg) => {
@@ -38,7 +33,7 @@ bot.on('callback_query', function onCallbackQuery(callbackQuery) {
     let msg = callbackQuery.message;
     let noEdit = false;
 
-    console.log(msg);
+    console.log(callbackQuery);
 
     winston.info({action: action, user: msg.chat.username});
 
@@ -79,5 +74,5 @@ bot.on('callback_query', function onCallbackQuery(callbackQuery) {
 //tratar erros
 bot.on('polling_error', handleError);
 function handleError(error) {
-    console.log(error);
+    console.log(error.response.body.description);
 }
