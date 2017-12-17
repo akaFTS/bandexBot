@@ -1,3 +1,5 @@
+//classe responsavel por buscar e gerenciar os cardapios na base da USP
+
 const moment = require('moment');
 const axios = require('axios');
 const Q = require("q");
@@ -25,7 +27,7 @@ function setupCaching() {
 //baixa informações de todos os bandejões para o dia de hoje e armazena em cache
 //retorna uma promise que é resolvida quando toda a info estiver disponivel
 function cache() {
-    
+
     //só cacheia de novo se for outro dia
     if(isCacheValid())
         return;

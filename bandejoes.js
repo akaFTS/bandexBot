@@ -1,4 +1,8 @@
+//classe que contém as definições dos bandejões apenas
+
 var self = module.exports = {
+
+    //códigos deles na API da USP
     codes: {
         ESALQ          : 1,
         SAOCARLOSC1    : 2,
@@ -18,6 +22,7 @@ var self = module.exports = {
         BAURU          : 20
     },
 
+    //nomes legíveis
     names: {
         ESALQ          : "ESALQ",
         SAOCARLOSC1    : "São Carlos - C1",
@@ -37,6 +42,7 @@ var self = module.exports = {
         BAURU          : "Bauru"       
     },
 
+    //ordem escolhida pra que apareçam na listagem
     orderlist: [
         "CENTRAL",
         "FISICA",

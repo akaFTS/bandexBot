@@ -1,10 +1,14 @@
-const cardapios = require('./cardapios');
+//classe responsável por construir os textos e botões exibidos para o usuário
 
 var self = module.exports = {
     ABOUT: 0,
     INITIAL: 1,
     NOTIFICATIONS: 2,
     BNDLIST: 3,
+    BNDFULL: 4,
+    NOTIPAUSE: 5,
+    NOTILIST: 6,
+    NOTITOGGLE: 7,
 
     prepare: prepare,
     prepareForEdit: prepareForEdit    
@@ -17,8 +21,9 @@ function prepare(index, params) {
     wrapper.opts.parse_mode = "Markdown";
     wrapper.opts.reply_markup = {};
 
-    if(index == self.ABOUT) {
-        wrapper.text = `🔹            *BandexBot  v0.8*            🔹
+    switch(index) {
+        case self.ABOUT:
+            wrapper.text = `🔹            *BandexBot  v0.8*            🔹
 🔹 by @akafts and USPCodeLab at *IME-USP* 🔹
 
 🖥 Quer fazer sistemas como este? Participe do *USPCodeLab*!
@@ -26,73 +31,129 @@ function prepare(index, params) {
 
 👍 *Curtiu? Repasse pros amigos!* 👍
 `;
-        wrapper.opts.reply_markup.inline_keyboard = [
-            [
-                {
-                    text: '⬅️ Voltar',
-                    callback_data: 'DUPE_INITIAL'
-                }
-            ]
-        ];         
-    }
+            wrapper.opts.reply_markup.inline_keyboard = [
+                [
+                    {
+                        text: '⬅️ Voltar',
+                        callback_data: 'DUPE_INITIAL'
+                    }
+                ]
+            ]; 
+            break;
 
-    if(index == self.INITIAL) {
-        wrapper.text = `*Bem-vindo ao BandexBot!* Em que posso ajudar?`;
-        wrapper.opts.reply_markup.inline_keyboard = [
-            [
-                {
-                    text: '☀️ Ver Almoço',
-                    callback_data: 'BNDLIST_ALMOCO_0'
-                },
-                {
-                    text: '🌙 Ver Janta',
-                    callback_data: 'BNDLIST_JANTA_0'
-                }
-            ],
-            [
-                {
-                    text: '⚙️ Gerenciar Notificações',
-                    callback_data: 'NOTIFICATIONS'
-                }
-            ],
-            [
-                {
-                    text: 'ℹ️ Sobre o BandexBot',
-                    callback_data: 'ABOUT'
-                }
-            ]
-        ];
-    }
-    else if(index == self.NOTIFICATIONS) {
-        wrapper.text = `⚙️ *Gerenciar Notificações*\nEssa funcionalidade ainda não está disponível 😕`;
-        wrapper.opts.reply_markup.inline_keyboard = [
-            [
-                {
-                    text: '⬅️ Voltar',
-                    callback_data: 'BACK_INITIAL'
-                }
-            ]
-        ]; 
-    }
-    else if(index == self.BNDLIST) {
-        wrapper.text = (params.time == "ALMOCO") ? "☀️ *Ver Almoço*" : "🌙 *Ver Janta*";
-        wrapper.text += "\nSelecione um bandejão:";
-        wrapper.opts.reply_markup.inline_keyboard = getBandexList(`BNDLIST_${params.time}_${params.page}`, 
-                                                                    `BNDFULL_${params.time}_`, "INITIAL");
-    }
+        case self.INITIAL:
+            wrapper.text = `*Bem-vindo ao BandexBot!* Em que posso ajudar?`;
+            wrapper.opts.reply_markup.inline_keyboard = [
+                [
+                    {
+                        text: '☀️ Ver Almoço',
+                        callback_data: 'BNDLIST_ALMOCO_0'
+                    },
+                    {
+                        text: '🌙 Ver Janta',
+                        callback_data: 'BNDLIST_JANTA_0'
+                    }
+                ],
+                [
+                    {
+                        text: '⚙️ Gerenciar Notificações',
+                        callback_data: 'NOTIFICATIONS'
+                    }
+                ],
+                [
+                    {
+                        text: 'ℹ️ Sobre o BandexBot',
+                        callback_data: 'ABOUT'
+                    }
+                ]
+            ];
+            break;
 
-    else if(index == self.BNDFULL) {
-        wrapper.text = makeMenu(params.place, params.time);
-        wrapper.opts.reply_markup.inline_keyboard = [
-            [
-                {
-                    text: '⬅️ Voltar',
-                    callback_data: `DUPE_BNDLIST_${params.time}_0`
-                }
-            ]
-        ];
-    }
+        case self.BNDLIST:
+            wrapper.text = (params.time == "ALMOCO") ? "☀️ *Ver Almoço*" : "🌙 *Ver Janta*";
+            wrapper.text += "\nSelecione um bandejão:";
+            wrapper.opts.reply_markup.inline_keyboard = buildBandexList(params.list, 
+                `BNDLIST_${params.time}_${params.page}`, `BNDFULL_${params.time}_`, "INITIAL");
+            break;
 
+        case self.BNDFULL:
+            wrapper.text = buildMenu(params.menu);
+            wrapper.opts.reply_markup.inline_keyboard = [
+                [
+                    {
+                        text: '⬅️ Voltar',
+                        callback_data: `DUPE_BNDLIST_${params.time}_0`
+                    }
+                ]
+            ];
+            break;
+
+        case self.NOTIFICATIONS:
+            let optext;
+            wrapper.text = `⚙️ *Gerenciar Notificações*\n`;        
+            if(params.paused) {
+                wrapper.text += `Suas notificações estão pausadas. Clique em *Resumir Notificações* para ligá-las de novo.`;
+                optext = '▶️ Resumir Notificações';
+            }
+            else {
+                wrapper.text += `Você pode configurar suas notificações para almoço e janta, ou desligar todas por um tempo.`;
+                optext = '⏸ Pausar Notificações';
+            }
+
+            wrapper.opts.reply_markup.inline_keyboard = [
+                [
+                    {
+                        text: '☀️ Almoço',
+                        callback_data: 'NOTILIST_ALMOCO_0'
+                    },
+                    {
+                        text: '🌙 Janta',
+                        callback_data: 'NOTILIST_JANTA_0'
+                    }
+                ],           
+                [
+                    {
+                        text: optext,
+                        callback_data: 'NOTIPAUSE'
+                    }
+                ],            
+                [
+                    {
+                        text: '⬅️ Voltar',
+                        callback_data: 'BACK_INITIAL'
+                    }
+                ]
+            ]; 
+            break;
+
+        case self.NOTIPAUSE:
+            if(params.paused)
+                wrapper.text = `⏸ *Pausar Notificações*\nSuas notificações foram pausadas.`;
+            else
+                wrapper.text = `▶️ *Resumir Notificações*\nSuas notificações foram resumidas.`;
+            wrapper.opts.reply_markup.inline_keyboard = [          
+                [
+                    {
+                        text: '⬅️ Voltar',
+                        callback_data: 'BACK_NOTIFICATIONS'
+                    }
+                ]
+            ]; 
+            break;
+
+        case self.NOTILIST:
+            if(params.time == "ALMOCO") {
+                wrapper.text = "☀️ *Notificações de Almoço*\nToque em um bandejão para ligar ou desligar as notificações dele.\n " 
+                    + "Você receberá uma notificação com o cardápio dos bandejões selecionados *todos os dias úteis às 11h30*.";
+            }
+            else {
+                wrapper.text = "🌙 *Notificações de Janta*\nToque em um bandejão para ligar ou desligar as notificações dele.\n " 
+                    + "Você receberá uma notificação com o cardápio dos bandejões selecionados *todos os dias úteis às 18h30*.";                
+            }
+            wrapper.opts.reply_markup.inline_keyboard = buildBandexList(params.list, 
+                `NOTILIST_${params.time}_${params.page}`, `NOTITOGGLE_${params.time}_${params.page}_`, "NOTIFICATIONS");
+            break;
+    }
     return wrapper;
 }
 
@@ -106,25 +167,38 @@ function prepareForEdit(index, msg, params) {
 }
 
 //prepara um keyboard de seleção de bandejões, com 6 bandejões por pagina
-//recebe o estado atual, um prefixo para o callback_data, e o estado para onde voltar
-function getBandexList(state, preffix, back) {
+//recebe a lista de bandejoes, o estado atual, um prefixo para o callback_data, e o estado para onde voltar
+function buildBandexList(list, state, preffix, back) {
     let splitter = state.split("_");
     let keyboard = [];
     let row;
     let page = +splitter[2];
-
-    let list = cardapios.getBandexList();
     let index = page*6;
+    let text;
 
     //adicionamos os bandejoes, de 2 em 2
     while(index < (page+1)*6 && index < 16) {
         row = [];
+        text = list[index].name;
+        if(typeof list[index].subscribed != "undefined") {
+            if(list[index].subscribed) 
+                text = "🔔 " + text;
+            else
+                text = "🔕 " + text;
+        }
         row.push({
-            text: list[index].name,
+            text: text,
             callback_data: preffix+list[index].code
         });
+        text = list[index+1].name;
+        if(typeof list[index+1].subscribed != "undefined") {
+            if(list[index+1].subscribed) 
+                text = "🔔 " + text;
+            else
+                text = "🔕 " + text;
+        }
         row.push({
-            text: list[index+1].name,
+            text: text,
             callback_data: preffix+list[index+1].code
         });  
         keyboard.push(row);    
@@ -158,11 +232,8 @@ function getBandexList(state, preffix, back) {
     return keyboard;
 }
 
-//recebe o codigo de um bandex e o momento (almoco/janta),
-//busca o cardapio na base e prepara sua exibiçao
-function makeMenu(bandex, time) {
-    let menu = cardapios.fetch(bandex, (time == "ALMOCO") ? 0 : 1)
-
+//recebe o menu e prepara sua exibiçao
+function buildMenu(menu) {
     let text = `🍱 *CARDÁPIO DE HOJE* (${menu.date} - ${menu.time}) 🍱
         🏛 *${menu.place}* 🏛`;
 
