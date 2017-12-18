@@ -1,5 +1,7 @@
 //classe responsável por construir os textos e botões exibidos para o usuário
 
+const moment = require('moment');
+
 var self = module.exports = {
     ABOUT: 0,
     INITIAL: 1,
@@ -11,7 +13,9 @@ var self = module.exports = {
     NOTITOGGLE: 7,
 
     prepare: prepare,
-    prepareForEdit: prepareForEdit    
+    prepareForEdit: prepareForEdit,
+    getDigestTitle: getDigestTitle,
+    getDigestEntry: getDigestEntry    
 };
 
 //preparar alguma mensagem (e teclado de resposta) para envio
@@ -252,8 +256,36 @@ function buildMenu(menu) {
     else {
         text += `
 
-        🚫 *Nada consta, provavelmente fechado* 🚫
+        🚫 Nada consta, provavelmente fechado 🚫
         `;
+    }
+    return text;
+}
+
+
+//gera uma mensagem que será o cabeçalho do digest de notificação
+function getDigestTitle(time) {
+    date = moment().format('dddd');
+    time = (time == 0) ? "Almoço" : "Janta";
+    return `🌮 *HOJE NO BANDEJÃO* (${date} - ${time}) 🌮\n\n`;
+}
+
+//gera um pequeno texto a partir de um menu de um bandejão
+function getDigestEntry(menu) {
+    let text = `        🏛 *${menu.place}* 🏛`;
+
+    if(menu.foods.length > 3) {
+        text += `       🍚  ${menu.foods[0]}
+        🍗  ${menu.foods[1]}
+        🌿  ${menu.foods[2]}
+        🍠  ${menu.foods[3]}
+        🥗  ${menu.foods[4]}
+        🎂  ${menu.foods[5]}
+        🍞  ${menu.foods[6]}\n\n`;
+    }
+    else {
+        text += `
+        🚫 Nada consta, provavelmente fechado 🚫\n\n`;
     }
     return text;
 }

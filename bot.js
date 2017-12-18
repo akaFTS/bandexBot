@@ -15,7 +15,9 @@ moment.locale('pt-br');
 //SETUP INICIAL
 console.log("Server up!");
 cardapios.setupCaching();
-notifications.setup();
+notifications.setup((text, id) => {
+    bot.sendMessage(id, text, {parse_mode: "Markdown"});
+});
 
 //ao receber qualquer mensagem, printar o menu inicial
 bot.on('message', (msg) => {
@@ -99,5 +101,8 @@ bot.on('callback_query', function onCallbackQuery(callbackQuery) {
 //tratar erros
 bot.on('polling_error', handleError);
 function handleError(error) {
-    console.log(error);
+    if(error.response && error.response.body)
+        console.log(error.response.body.description);
+    else
+        console.log(error);
 }
