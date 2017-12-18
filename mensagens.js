@@ -272,7 +272,7 @@ function getDigestTitle(time) {
 
 //gera um pequeno texto a partir de um menu de um bandejão
 function getDigestEntry(menu) {
-    let text = `        🏛 *${menu.place}* 🏛`;
+    let text = `        🏛 *${menu.place}* 🏛\n`;
 
     if(menu.foods.length > 3) {
         text += `       🍚  ${menu.foods[0]}
@@ -284,8 +284,7 @@ function getDigestEntry(menu) {
         🍞  ${menu.foods[6]}\n\n`;
     }
     else {
-        text += `
-        🚫 Nada consta, provavelmente fechado 🚫\n\n`;
+        text += `       🚫 Nada consta, provavelmente fechado 🚫\n\n`;
     }
     return text;
 }
