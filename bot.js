@@ -7,7 +7,7 @@ const cardapios = require('./cardapios');
 const mensagens = require('./mensagens');
 const notifications = require('./notifications');
 
-let token = "509006825:AAGd3FWC3cSQnWm7-WYZxfeSMxGhukLnlaM";
+let token = "";
 let bot = new TelegramBot(token, { polling: true });
 winston.add(winston.transports.File, { filename: 'log.txt' });
 moment.locale('pt-br');
