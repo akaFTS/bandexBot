@@ -9,7 +9,7 @@ const notifications = require('./notifications');
 
 let token = "";
 let bot = new TelegramBot(token, { polling: true });
-winston.add(winston.transports.File, { filename: 'log.txt' });
+winston.add(winston.transports.File, { filename: 'logs/actions.log' });
 moment.locale('pt-br');
 
 //SETUP INICIAL
