@@ -33,8 +33,11 @@ bot.on('callback_query', function onCallbackQuery(callbackQuery) {
     let userid = from.id;
     let noEdit = false;
 
-
-    winston.info({action: action, user: from.username, group: msg.chat.title});
+    //log das atividades
+    if(from.username)
+        winston.info({action: action, user: from.username, group: msg.chat.title});
+    else
+        winston.info({action: action, user: from.firstName + " " + from.lastName, group: msg.chat.title});
 
     //pra voltar pro anterior sempre começa com back 
     if(action.startsWith("BACK")) {
