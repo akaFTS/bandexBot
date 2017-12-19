@@ -35,9 +35,9 @@ bot.on('callback_query', function onCallbackQuery(callbackQuery) {
 
     //log das atividades
     if(from.username)
-        winston.info({action: action, user: from.username, group: msg.chat.title});
+        winston.info({action: action, user: from.username, group: msg.chat.title, userid: userid});
     else
-        winston.info({action: action, user: from.firstName + " " + from.lastName, group: msg.chat.title});
+        winston.info({action: action, user: from.firstName + " " + from.lastName, group: msg.chat.title, userid: userid});
 
     //pra voltar pro anterior sempre começa com back 
     if(action.startsWith("BACK")) {
