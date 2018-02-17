@@ -1,5 +1,4 @@
 //classe principal do sistema
-
 const TelegramBot = require('node-telegram-bot-api');
 const moment = require('moment');
 const winston = require('winston');

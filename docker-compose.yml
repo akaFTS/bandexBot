@@ -4,13 +4,14 @@ services:
   node:
     build:
       context: .
+    image: akafts/bandexbot
     command: nodemon bot.js
     volumes:
       - ./src:/opt/app
+      - /opt/storage
     secrets:
       - bot_token
 
 secrets:
   bot_token:
     file: ./bot_token.txt
-

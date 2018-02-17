@@ -18,7 +18,7 @@ let storage;
 //configura o armazenamento de dados e liga as notificações
 //recebe um callback que contem a ação de envio da mensagem pelo bot
 function setup(sendAction) {
-    storage = new Storage('./storage');
+    storage = new Storage('../storage/subscriptions');
 
     //notificações de almoço
     new CronJob({
