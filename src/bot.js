@@ -104,6 +104,8 @@ bot.on('callback_query', function onCallbackQuery(callbackQuery) {
 
 //tratar erros
 bot.on('polling_error', handleError);
+process.on('uncaughtException', handleError);
+
 function handleError(error) {
     if(error.response && error.response.body)
         console.log(error.response.body.description);

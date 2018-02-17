@@ -39,7 +39,7 @@ function prepare(index, params) {
                 [
                     {
                         text: '⬅️ Voltar',
-                        callback_data: 'DUPE_INITIAL'
+                        callback_data: 'BACK_INITIAL'
                     }
                 ]
             ]; 
@@ -86,7 +86,7 @@ function prepare(index, params) {
                 [
                     {
                         text: '⬅️ Voltar',
-                        callback_data: `DUPE_BNDLIST_${params.time}_0`
+                        callback_data: `BACK_BNDLIST_${params.time}_0`
                     }
                 ]
             ];
