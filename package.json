@@ -1,6 +1,6 @@
 {
   "name": "bandexBot",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Um bot para informar os cardapios da USP",
   "main": "bot.js",
   "repository": {

@@ -27,7 +27,7 @@ function prepare(index, params) {
 
     switch(index) {
         case self.ABOUT:
-            wrapper.text = `🔹            *BandexBot  v0.8*            🔹
+            wrapper.text = `🔹            *BandexBot  v0.8.1*            🔹
 🔹 by @akafts and USPCodeLab at *IME-USP* 🔹
 
 🖥 Quer fazer sistemas como este? Participe do *USPCodeLab*!
