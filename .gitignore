@@ -57,3 +57,6 @@ typings/
 # dotenv environment variables file
 .env
 
+# bot token secret
+bot_token.txt
+

@@ -238,28 +238,8 @@ function buildBandexList(list, state, preffix, back) {
 
 //recebe o menu e prepara sua exibiçao
 function buildMenu(menu) {
-    let text = `🍱 *CARDÁPIO DE HOJE* (${menu.date} - ${menu.time}) 🍱
-        🏛 *${menu.place}* 🏛`;
-
-    if(menu.foods.length > 3) {
-        text += `
-
-        🍚  ${menu.foods[0]}
-        🍗  ${menu.foods[1]}
-        🌿  ${menu.foods[2]}
-        🍠  ${menu.foods[3]}
-        🥗  ${menu.foods[4]}
-        🎂  ${menu.foods[5]}
-        🍞  ${menu.foods[6]}
-        `;
-    }
-    else {
-        text += `
-
-        🚫 Nada consta, provavelmente fechado 🚫
-        `;
-    }
-    return text;
+    let header = `🍱 *CARDÁPIO DE HOJE* (${menu.date} - ${menu.time}) 🍱\n\n`;
+    return header + getDigestEntry(menu);
 }
 
 

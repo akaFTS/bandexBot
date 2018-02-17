@@ -3,11 +3,13 @@
 const TelegramBot = require('node-telegram-bot-api');
 const moment = require('moment');
 const winston = require('winston');
+const secrets = require('@cloudreach/docker-secrets');
 const cardapios = require('./cardapios');
 const mensagens = require('./mensagens');
 const notifications = require('./notifications');
 
-let token = "";
+//token é buscado via docker secrets
+let token = secrets.bot_token;
 let bot = new TelegramBot(token, { polling: true });
 winston.add(winston.transports.File, { filename: 'logs/actions.log' });
 moment.locale('pt-br');

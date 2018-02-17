@@ -1,21 +1,14 @@
 {
-  "name": "bandex_bot",
-  "version": "1.0.0",
+  "name": "bandexBot",
+  "version": "0.8.0",
   "description": "Um bot para informar os cardapios da USP",
   "main": "bot.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/EdinhoN/BandeMessageUSP-RUSPMessage.git"
+    "url": "git+https://github.com/akaFTS/bandexBot.git"
   },
-  "author": "USPCodeLab",
+  "author": "Gustavo Silva",
   "license": "ISC",
-  "bugs": {
-    "url": "https://gitlab.com/EdinhoN/BandeMessageUSP-RUSPMessage/issues"
-  },
-  "homepage": "https://gitlab.com/EdinhoN/BandeMessageUSP-RUSPMessage#README",
   "dependencies": {
     "axios": "^0.17.0",
     "cheerio": "^1.0.0-rc.2",
@@ -24,6 +17,10 @@
     "node-storage": "0.0.7",
     "node-telegram-bot-api": "^0.29.0",
     "q": "^1.5.1",
-    "winston": "^2.4.0"
+    "winston": "^2.4.0",
+    "@cloudreach/docker-secrets": "^1.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^1.15.0"
   }
 }

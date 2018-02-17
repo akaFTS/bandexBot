@@ -7,8 +7,8 @@ O bot oficial pode ser encontrado em <https://t.me/uspbandexbot>. A partir daí,
 ## Como contribuir
 1. Clone este repositório
 2. Crie um bot de teste no [@botFather](https://t.me/botFather) e guarde o token gerado
-3. Adicione o token na linha apropriada no começo do arquivo `bot.js`
-4. Faça as mudanças que quiser e rode o bot usando `node bot.js` (de preferência com uma versão atualizada do node)
+3. Adicione o token em sua devida variável de ambiente no `docker-compose.yml`
+4. Faça as mudanças que quiser e rode o bot usando `docker-compose up`
 5. Converse com ele via Telegram
 6. Quando terminar, submeta um PR informando o username do seu bot de teste para que eu possa verificar se está tudo funcionando. Se estiver, o PR ser incorporado ao bot principal.
 

@@ -1,0 +1,16 @@
+version: '3.4'
+
+services:
+  node:
+    build:
+      context: .
+    command: nodemon bot.js
+    volumes:
+      - ./src:/opt/app
+    secrets:
+      - bot_token
+
+secrets:
+  bot_token:
+    file: ./bot_token.txt
+
