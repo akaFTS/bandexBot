@@ -10,8 +10,11 @@ const notifications = require('./notifications');
 //token é buscado via docker secrets
 let token = secrets.bot_token;
 let bot = new TelegramBot(token, { polling: true });
-winston.add(winston.transports.File, { filename: 'logs/actions.log' });
 moment.locale('pt-br');
+
+//logging da aplicação direto pro console (12factor)
+winston.exitOnError = false;
+winston.handleExceptions(new winston.transports.Console());
 
 //SETUP INICIAL
 console.log("Server up!");
@@ -121,7 +124,6 @@ bot.on('callback_query', function onCallbackQuery(callbackQuery) {
 
 //tratar erros
 bot.on('polling_error', handleError);
-process.on('uncaughtException', handleError);
 
 function handleError(error) {
     if(error.response && error.response.body)
