@@ -11,11 +11,15 @@ var self = module.exports = {
     NOTIPAUSE: 5,
     NOTILIST: 6,
     NOTITOGGLE: 7,
+    NOTITIMES: 8,
+    NOTITIMEPICKER: 9,
+    NOTITIMECHOOSE: 10,
 
     prepare: prepare,
     prepareForEdit: prepareForEdit,
     getDigestTitle: getDigestTitle,
-    getDigestEntry: getDigestEntry    
+    getDigestEntry: getDigestEntry,
+    getTimeForTier: getTimeForTier
 };
 
 //preparar alguma mensagem (e teclado de resposta) para envio
@@ -60,7 +64,7 @@ function prepare(index, params) {
                 ],
                 [
                     {
-                        text: '⚙️ Gerenciar Notificações',
+                        text: '🔔 Notificações Diárias',
                         callback_data: 'NOTIFICATIONS'
                     }
                 ],
@@ -94,7 +98,7 @@ function prepare(index, params) {
 
         case self.NOTIFICATIONS:
             let optext;
-            wrapper.text = `⚙️ *Gerenciar Notificações*\n`;        
+            wrapper.text = `🔔 *Notificações Diárias*\n`;        
             if(params.paused) {
                 wrapper.text += `Suas notificações estão pausadas. Clique em *Resumir Notificações* para ligá-las de novo.`;
                 optext = '▶️ Resumir Notificações';
@@ -120,7 +124,13 @@ function prepare(index, params) {
                         text: optext,
                         callback_data: 'NOTIPAUSE'
                     }
-                ],            
+                ],   
+                [
+                    {
+                        text: '🕒 Gerenciar Horários',
+                        callback_data: 'NOTITIMES'
+                    }
+                ],         
                 [
                     {
                         text: '⬅️ Voltar',
@@ -147,15 +157,103 @@ function prepare(index, params) {
 
         case self.NOTILIST:
             if(params.time == "ALMOCO") {
+                let time = self.getTimeForTier(0, params.times.day, false);
                 wrapper.text = "☀️ *Notificações de Almoço*\nToque em um bandejão para ligar ou desligar as notificações dele.\n " 
-                    + "Você receberá uma notificação com o cardápio dos bandejões selecionados *todos os dias úteis às 11h30*.";
+                    + `Você receberá uma notificação com o cardápio dos bandejões selecionados *todos os dias úteis às ${time}*.`;
             }
             else {
+                let time = self.getTimeForTier(1, params.times.night, false);
                 wrapper.text = "🌙 *Notificações de Janta*\nToque em um bandejão para ligar ou desligar as notificações dele.\n " 
-                    + "Você receberá uma notificação com o cardápio dos bandejões selecionados *todos os dias úteis às 18h30*.";                
+                    + `Você receberá uma notificação com o cardápio dos bandejões selecionados *todos os dias úteis às ${time}*.`;                
             }
             wrapper.opts.reply_markup.inline_keyboard = buildBandexList(params.list, 
                 `NOTILIST_${params.time}_${params.page}`, `NOTITOGGLE_${params.time}_${params.page}_`, "NOTIFICATIONS");
+            break;
+
+        case self.NOTITIMES:
+            wrapper.text = "🕒 *Gerenciar Horários*\nVocê será notificado nos seguintes horários:\n";
+            let daytime = self.getTimeForTier(0, params.times.day, false);
+            let nighttime = self.getTimeForTier(1, params.times.night, false);
+
+            wrapper.text += `☀️ Almoço: *${daytime}*\n🌙 Janta: *${nighttime}*`;
+            wrapper.opts.reply_markup.inline_keyboard = [  
+                [
+                    {
+                        text: '☀️ Mudar Almoço',
+                        callback_data: 'NOTITIMEPICKER_ALMOCO'
+                    },
+                    {
+                        text: '🌙  Mudar Janta',
+                        callback_data: 'NOTITIMEPICKER_JANTA'
+                    }
+                ],        
+                [
+                    {
+                        text: '⬅️ Voltar',
+                        callback_data: 'BACK_NOTIFICATIONS'
+                    }
+                ]
+            ]; 
+            break;
+        case self.NOTITIMEPICKER:
+            if(params.time == "ALMOCO") {
+                wrapper.text = "🕒 *Gerenciar Almoço*";
+                wrapper.opts.reply_markup.inline_keyboard = [  
+                    [
+                        {
+                            text: getTimeForTier(0, 1, true),
+                            callback_data: 'NOTITIMECHOOSE_ALMOCO_1'
+                        },
+                        {
+                            text: getTimeForTier(0, 2, true),
+                            callback_data: 'NOTITIMECHOOSE_ALMOCO_2'
+                        }
+                    ],        
+                    [
+                        {
+                            text: getTimeForTier(0, 3, true),
+                            callback_data: 'NOTITIMECHOOSE_ALMOCO_3'
+                        },
+                        {
+                            text: getTimeForTier(0, 4, true),
+                            callback_data: 'NOTITIMECHOOSE_ALMOCO_4'
+                        }
+                    ]
+                ]; 
+            }
+            else {
+                wrapper.text = "🕒 *Gerenciar Janta*";
+                wrapper.opts.reply_markup.inline_keyboard = [  
+                    [
+                        {
+                            text: getTimeForTier(1, 1, true),
+                            callback_data: 'NOTITIMECHOOSE_JANTA_1'
+                        },
+                        {
+                            text: getTimeForTier(1, 2, true),
+                            callback_data: 'NOTITIMECHOOSE_JANTA_2'
+                        }
+                    ],        
+                    [
+                        {
+                            text: getTimeForTier(1, 3, true),
+                            callback_data: 'NOTITIMECHOOSE_JANTA_3'
+                        },
+                        {
+                            text: getTimeForTier(1, 4, true),
+                            callback_data: 'NOTITIMECHOOSE_JANTA_4'
+                        }
+                    ]
+                ]; 
+            }
+            wrapper.text += "\nEscolha o melhor horário para ser notificado dos cardápios do dia:";
+            wrapper.opts.reply_markup.inline_keyboard.push([
+                {
+                    text: '⬅️ Voltar',
+                    callback_data: 'BACK_NOTITIMES'
+                }
+            ]);
+            
             break;
     }
     return wrapper;
@@ -267,4 +365,37 @@ function getDigestEntry(menu) {
         text += `       🚫 Nada consta, provavelmente fechado 🚫\n\n`;
     }
     return text;
+}
+
+//pegar o horário a partir de almoco/janta e o momento (1 a 4), com ou sem relojinho
+function getTimeForTier(dinner, tier, emoji) {
+    let time;
+    tier = tier + "";
+    switch(tier) {
+        case '1':
+            time = dinner ? "17:30" : "11:00";
+            break;
+        case '2':
+            time = dinner ? "18:00" : "11:30";
+            break;
+        case '3':
+            time = dinner ? "18:30" : "12:00";
+            break;
+        default:
+            time = dinner ? "19:00" : "12:30";
+    }
+    return emoji ? getClockForTier(dinner, tier) + " " + time : time;
+}
+
+function getClockForTier(dinner, tier) {
+    switch(tier) {
+        case '1':
+            return dinner ? "🕠" : "🕚";
+        case '2':
+            return dinner ? "🕕" : "🕦";
+        case '3':
+            return dinner ? "🕡" : "🕛";
+        default:
+            return dinner ? "🕖" : "🕧";
+    }
 }

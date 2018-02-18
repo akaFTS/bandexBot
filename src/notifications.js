@@ -5,10 +5,12 @@ const { CronJob } = require("cron");
 const mensagens = require('./mensagens');
 const cardapios = require('./cardapios');
 
-module.exports = {
+var self = module.exports = {
     setup: setup,
     togglePause: togglePause,
     isPaused: isPaused,
+    getTimes: getTimes,
+    setTime: setTime,
     fillListWithNotifications: fillListWithNotifications,
     toggleNotifications: toggleNotifications
 }
@@ -20,23 +22,47 @@ let storage;
 function setup(sendAction) {
     storage = new Storage('../storage/subscriptions');
 
-    //notificações de almoço
-    new CronJob({
-        cronTime: "00 30 11 * * 1-5", //11h30 de todo dia útil
-        start: true,
-        onTick: function() {
-            sendDigest(0, sendAction);
-        }
-    });
+    //buscamos o primeiro horario, vamos adicionando meia hora a partir dele
+    let firsttier = mensagens.getTimeForTier(0, 1);
+    let firstsplit = firsttier.split(":");
+    let hour = parseInt(firstsplit[0]);
+    let minutes = parseInt(firstsplit[1]);
 
-    //notificações de janta
-    new CronJob({
-        cronTime: "00 30 18 * * 1-5", //18h30 de todo dia útil
-        start: true,
-        onTick: function() {
-            sendDigest(1, sendAction);
-        }
-    });
+    //quatro horários de notificação de almoço
+    for(let i = 1; i < 5; i++) {
+        new CronJob({
+            cronTime: `00 ${minutes} ${hour} * * 1-5`,
+            start: true,
+            onTick: function() {
+                sendDigest(0, i, sendAction);
+            }
+        });
+        minutes += 30;
+        minutes %= 60;
+        if(minutes == 0)
+            hour++;
+    }
+
+    //buscamos o primeiro horario, vamos adicionando meia hora a partir dele
+    firsttier = mensagens.getTimeForTier(1, 1);
+    firstsplit = firsttier.split(":");
+    hour = parseInt(firstsplit[0]);
+    minutes = parseInt(firstsplit[1]);
+
+    //quatro horários de notificação de janta
+    for(let i = 1; i < 5; i++) {
+        new CronJob({
+            cronTime: `00 ${minutes} ${hour} * * 1-5`,
+            start: true,
+            onTick: function() {
+                sendDigest(1, i, sendAction);
+            }
+        });
+        minutes += 30;
+        minutes %= 60;
+        if(minutes == 0)
+            hour++;
+    }
 }
 
 //pausa ou despausa as notificações de um determinado usuario
@@ -50,6 +76,20 @@ function togglePause(uid) {
 //verifica se um usuario está pausado ou não
 function isPaused(uid) {
     return storage.get(`subscribers.u${uid}.paused`) == true;
+}
+
+//recebe os horários que o usuário é notificado (1 a 4, almoço e janta)
+function getTimes(uid) {
+    let times = {};
+    times.day = storage.get(`subscribers.u${uid}.daytime`) || '2';
+    times.night = storage.get(`subscribers.u${uid}.nighttime`) || '2';
+    return times;
+}
+
+//seta o horario de notificação de um usuário (almoço/janta, 1 a 4)
+function setTime(uid, dinner, time) {
+    let moment = dinner ? 'nighttime' : 'daytime';
+    storage.put(`subscribers.u${uid}.${moment}`, time);
 }
 
 //recebe uma lista de bandejoes, e pra cada um deles
@@ -74,8 +114,8 @@ function toggleNotifications(uid, time, code) {
 }
 
 //prepara um digest diario de cada bandejão, e envia para os usuarios que escolheram ser notificados
-//recebe o momento (almoco/janta) como sendo 0/1 e o callback enviado no setup
-function sendDigest(time, sendAction) {
+//recebe o momento (almoco/janta) como sendo 0/1, a hora de notificar (1-4) e o callback enviado no setup
+function sendDigest(time, tier, sendAction) {
 
     //preparar textos-base
     let header = mensagens.getDigestTitle(time);
@@ -96,9 +136,19 @@ function sendDigest(time, sendAction) {
         let moment = time == 0 ? "almoco" : "janta";
         let usertext = "";
 
+        //retirar o "u" do uid
+        let id = uid.substring(1);
+
         //se o cara não tiver nada cadastrado ou estiver pausado, ignorar
         if(!user[moment] || user.paused)
             return;
+
+        //verificar se este é o horário de notificar este usuário
+        let times = self.getTimes(id);
+        let preftime = time ? times.night : times.day;
+        if(preftime != tier)
+            return;
+
 
         //preencher o texto com os bandejoes que ele escolheu
         Object.keys(user[moment]).forEach(code => {
@@ -109,9 +159,6 @@ function sendDigest(time, sendAction) {
         //se o cara tiver tudo cadastrado como falso, ignorar tambem
         if(usertext == "")
             return;
-
-        //retirar o "u" do uid
-        let id = uid.substring(1);
         usertext = header + usertext;
 
         //enviar

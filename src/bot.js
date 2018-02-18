@@ -79,8 +79,9 @@ bot.on('callback_query', function onCallbackQuery(callbackQuery) {
     else if(action.startsWith("NOTILIST")) {
         let splitter = action.split("_");
         let list = cardapios.getBandexList();
+        let times = notifications.getTimes(userid);
         notifications.fillListWithNotifications(userid, list, splitter[1]);
-        comm = mensagens.prepareForEdit(mensagens["NOTILIST"], msg, {list: list, time: splitter[1], page: splitter[2]});
+        comm = mensagens.prepareForEdit(mensagens["NOTILIST"], msg, {list: list, time: splitter[1], page: splitter[2], times: times});
     }
     //ligar/desligar notificações de um bandejão
     //parametros: almoco/janta, pagina e bandex
@@ -91,6 +92,22 @@ bot.on('callback_query', function onCallbackQuery(callbackQuery) {
         let list = cardapios.getBandexList();
         notifications.fillListWithNotifications(userid, list, splitter[1]);
         comm = mensagens.prepareForEdit(mensagens["NOTILIST"], msg, {list: list, time: splitter[1], page: splitter[2]});
+    }
+    //exibir horários de notificação atuais
+    else if(action.startsWith("NOTITIMES")) {
+        let times = notifications.getTimes(userid);
+        comm = mensagens.prepareForEdit(mensagens["NOTITIMES"], msg, {times: times});
+    }
+    //gerenciar horários pra notificação
+    else if(action.startsWith("NOTITIMEPICKER")) {
+        let splitter = action.split("_");
+        comm = mensagens.prepareForEdit(mensagens["NOTITIMEPICKER"], msg, {time: splitter[1]});
+    }
+    else if(action.startsWith("NOTITIMECHOOSE")) {
+        let splitter = action.split("_");
+        notifications.setTime(userid, splitter[1] == "JANTA", splitter[2]);
+        let times = notifications.getTimes(userid);
+        comm = mensagens.prepareForEdit(mensagens["NOTITIMES"], msg, {times: times});
     }
     else {
         comm = mensagens.prepareForEdit(mensagens[action], msg);
