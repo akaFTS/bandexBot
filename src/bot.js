@@ -12,9 +12,10 @@ let token = secrets.bot_token;
 let bot = new TelegramBot(token, { polling: true });
 moment.locale('pt-br');
 
-//logging da aplicação direto pro console (12factor)
+//logging da aplicação
 winston.exitOnError = false;
-winston.handleExceptions(new winston.transports.Console());
+winston.add(winston.transports.File, { filename: "../storage/actions.log" });
+winston.handleExceptions(winston.transports.File, { filename: "../storage/errors.log" });
 
 //SETUP INICIAL
 console.log("Server up!");

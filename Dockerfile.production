@@ -16,7 +16,7 @@ ENV PATH /opt/node_modules/.bin:$PATH
 # copy code
 COPY src /app
 
-# create volume for subscription managing
+# create volume for subscription and log managing
 VOLUME [ "/opt/storage" ]
 
 # working dir for source code
