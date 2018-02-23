@@ -1,5 +1,5 @@
 # bandexBot
-Um bot para telegram que exibe o cardápio de almoço e janta no dia de hoje para qualquer bandejão da USP, além de enviar notificações diárias com o cardápio de seus bandejões favoritos.
+Um bot para telegram que exibe o cardápio de almoço e janta no dia de hoje para qualquer bandejão da USP, além de enviar **notificações diárias** com o cardápio de seus bandejões favoritos, na hora que você achar melhor.
 
 ## Como usar
 O bot oficial pode ser encontrado em <https://t.me/uspbandexbot>. A partir daí, é só ir clicando nos menus - a interação é  feita através de botões e não comandos de texto.
@@ -16,9 +16,6 @@ O bot oficial pode ser encontrado em <https://t.me/uspbandexbot>. A partir daí,
 Hospedar esse bot pra que ele esteja online o tempo todo custa dinheiro! Se ele é útil pra você, considere doar um pouco de Bitcoin para o humilde estudante universitário que criou e mantém ele: _18dexcKcFxSMwVChG3VmNN4ydyw7HQfYfU_
 
 Se não tiver Bitcoins pra doar, apareça no IME pra me pagar um café!
-
-## TO-DO
-- Permitir ao usuário escolher o horário para ser notificado
 
 ### Créditos
 Este bot foi desenvolvido por **Gustavo Silva** (eu) como parte do grupo **USPCodeLab**. :)
