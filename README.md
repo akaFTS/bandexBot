@@ -12,6 +12,11 @@ O bot oficial pode ser encontrado em <https://t.me/uspbandexbot>. A partir daí,
 5. Converse com ele via Telegram
 6. Quando terminar, submeta um PR informando o username do seu bot de teste para que eu possa verificar se está tudo funcionando. Se estiver, o PR ser incorporado ao bot principal.
 
+## Como contribuir mais ainda
+Hospedar esse bot pra que ele esteja online o tempo todo custa dinheiro! Se ele é útil pra você, considere doar um pouco de Bitcoin para o humilde estudante universitário que criou e mantém ele: _18dexcKcFxSMwVChG3VmNN4ydyw7HQfYfU_
+
+Se não tiver Bitcoins pra doar, apareça no IME pra me pagar um café!
+
 ## TO-DO
 - Permitir ao usuário escolher o horário para ser notificado
 
