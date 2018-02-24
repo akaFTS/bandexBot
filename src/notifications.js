@@ -22,35 +22,25 @@ let storage;
 function setup(sendAction) {
     storage = new Storage('../storage/subscriptions');
 
-    //buscamos o primeiro horario, vamos adicionando meia hora a partir dele
-    let firsttier = mensagens.getTimeForTier(0, 1);
-    let firstsplit = firsttier.split(":");
-    let hour = parseInt(firstsplit[0]);
-    let minutes = parseInt(firstsplit[1]);
-
     //quatro horários de notificação de almoço
-    for(let i = 1; i < 5; i++) {
+    for(let i = 1; i <= 4; i++) {
+        let tier = mensagens.getTimeForTier(0, i);
+        let hour = tier.split(":")[0];
+        let minutes = tier.split(":")[1];
         new CronJob({
-            cronTime: `00 ${minutes} ${hour} * * 1-5`,
+            cronTime: `00 ${minutes} ${hour} * * *`,
             start: true,
             onTick: function() {
                 sendDigest(0, i, sendAction);
             }
         });
-        minutes += 30;
-        minutes %= 60;
-        if(minutes == 0)
-            hour++;
     }
 
-    //buscamos o primeiro horario, vamos adicionando meia hora a partir dele
-    firsttier = mensagens.getTimeForTier(1, 1);
-    firstsplit = firsttier.split(":");
-    hour = parseInt(firstsplit[0]);
-    minutes = parseInt(firstsplit[1]);
-
     //quatro horários de notificação de janta
-    for(let i = 1; i < 5; i++) {
+    for(let i = 1; i <= 4; i++) {
+        let tier = mensagens.getTimeForTier(1, i);
+        let hour = tier.split(":")[0];
+        let minutes = tier.split(":")[1];
         new CronJob({
             cronTime: `00 ${minutes} ${hour} * * 1-5`,
             start: true,
@@ -58,10 +48,6 @@ function setup(sendAction) {
                 sendDigest(1, i, sendAction);
             }
         });
-        minutes += 30;
-        minutes %= 60;
-        if(minutes == 0)
-            hour++;
     }
 }
 
@@ -148,7 +134,6 @@ function sendDigest(time, tier, sendAction) {
         let preftime = time ? times.night : times.day;
         if(preftime != tier)
             return;
-
 
         //preencher o texto com os bandejoes que ele escolheu
         Object.keys(user[moment]).forEach(code => {

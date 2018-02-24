@@ -15,13 +15,22 @@ moment.locale('pt-br');
 //logging da aplicação
 winston.exitOnError = false;
 winston.add(winston.transports.File, { filename: "../storage/actions.log" });
-winston.handleExceptions(winston.transports.File, { filename: "../storage/errors.log" });
+//winston.handleExceptions(winston.transports.File, { filename: "../storage/errors.log" });
 
 //SETUP INICIAL
 console.log("Server up!");
 cardapios.setupCaching();
 notifications.setup((text, id) => {
-    bot.sendMessage(id, text, {parse_mode: "Markdown"});
+    bot.sendMessage(id, text, { parse_mode: "Markdown",
+                                reply_markup: {
+                                    inline_keyboard: [
+                                        [
+                                            {
+                                                text: '📝 Abrir Menu',
+                                                callback_data: 'DUPE_INITIAL'
+                                            }
+                                        ]
+                                    ]}});
 });
 
 //ao receber qualquer mensagem, printar o menu inicial
@@ -95,7 +104,8 @@ bot.on('callback_query', function onCallbackQuery(callbackQuery) {
         notifications.toggleNotifications(userid, splitter[1], splitter[3]);
         let list = cardapios.getBandexList();
         notifications.fillListWithNotifications(userid, list, splitter[1]);
-        comm = mensagens.prepareForEdit(mensagens["NOTILIST"], msg, {list: list, time: splitter[1], page: splitter[2]});
+        let times = notifications.getTimes(userid);
+        comm = mensagens.prepareForEdit(mensagens["NOTILIST"], msg, {list: list, time: splitter[1], page: splitter[2], times: times});
     }
     //exibir horários de notificação atuais
     else if(action.startsWith("NOTITIMES")) {

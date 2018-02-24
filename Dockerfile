@@ -1,6 +1,10 @@
 # ---- Base Node ----
 FROM node:8
 
+# Adjust timezone
+ENV TZ=America/Sao_Paulo
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 # Create app directory
 WORKDIR /opt
 

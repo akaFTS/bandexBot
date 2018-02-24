@@ -31,12 +31,12 @@ function prepare(index, params) {
 
     switch(index) {
         case self.ABOUT:
-            wrapper.text = `🔹 *BandexBot  v0.9*
+            wrapper.text = `🔹 *BandexBot  v0.9.5*
 🔹 by @akafts and USPCodeLab at *IME-USP*
 
 🌎 Contribua no GitHub (akafts/bandexBot)
 
-💵 *Aceito doações* (o sistema é caro de manter no ar)
+💵 *Aceito doações* (ajude a manter o sistema no ar)
 💵 Me pague uma cerveja em BTC: _18dexcKcFxSMwVChG3VmNN4ydyw7HQfYfU_
 `;
             wrapper.opts.reply_markup.inline_keyboard = [
