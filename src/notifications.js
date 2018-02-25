@@ -28,7 +28,7 @@ function setup(sendAction) {
         let hour = tier.split(":")[0];
         let minutes = tier.split(":")[1];
         new CronJob({
-            cronTime: `00 ${minutes} ${hour} * * *`,
+            cronTime: `00 ${minutes} ${hour} * * 1-5`,
             start: true,
             onTick: function() {
                 sendDigest(0, i, sendAction);
