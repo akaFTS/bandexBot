@@ -79,6 +79,7 @@ lineReader.on('close', function (line) {
             }
             if(preferences.paused) {
                 log += " (PAUSADO)";
+                subnum--;
             }
             if(blog == log) 
                 return;
