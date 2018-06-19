@@ -57,15 +57,13 @@ function cardapioButanta(time) {
 
     return text;
 }
-
-bot.onText(/\/almocoButanta/, (msg) => {
+bot.onText(/\/almoco_butanta/, (msg) => {
     let text = cardapioButanta(0);
 
     let options = {parse_mode: "Markdown"};
     bot.sendMessage(msg.chat.id, text, options).catch(handleError);
 });
-
-bot.onText(/\/jantaButanta/, (msg) => {
+bot.onText(/\/janta_butanta/, (msg) => {
     let text = cardapioButanta(1);
 
     let options = {parse_mode: "Markdown"};
