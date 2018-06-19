@@ -34,9 +34,42 @@ notifications.setup((text, id) => {
 });
 
 //ao receber qualquer mensagem, printar o menu inicial
-bot.on('message', (msg) => {
+bot.on('/start', (msg) => {
     comm = mensagens.prepare(mensagens.INITIAL);
     bot.sendMessage(msg.chat.id, comm.text, comm.opts).catch(handleError);
+});
+
+function cardapioButanta(time) {
+    const BUTANTA = ['CENTRAL', 'FISICA', 'QUIMICA', 'PREFEITURA'];
+
+    let menus = {};
+    let bandexes = cardapios.getBandexList();
+    bandexes.forEach(band => {
+        menus[band.code] = mensagens.getDigestEntry(cardapios.fetch(band.code, time));
+    });
+
+    let text = mensagens.getDigestTitle(time);
+    for (let item of bandexes) {
+        if (BUTANTA.includes(item.code)) {
+            text += menus[item.code];
+        }
+    }
+
+    return text;
+}
+
+bot.onText(/\/almocoButanta/, (msg) => {
+    let text = cardapioButanta(0);
+
+    let options = {parse_mode: "Markdown"};
+    bot.sendMessage(msg.chat.id, text, options).catch(handleError);
+});
+
+bot.onText(/\/jantaButanta/, (msg) => {
+    let text = cardapioButanta(1);
+
+    let options = {parse_mode: "Markdown"};
+    bot.sendMessage(msg.chat.id, text, options).catch(handleError);
 });
 
 //interpretar respostas do teclado interativo
