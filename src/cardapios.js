@@ -127,7 +127,8 @@ function fetch(bandex, time) {
     menu.date = moment().format('dddd');
     menu.time = (time == 0) ? "Almoço" : "Janta";
     menu.place = bandejoes.names[bandex];
-    menu.foods = menus[bandejoes.codes[bandex]][time];
-
+    try {    
+        menu.foods = menus[bandejoes.codes[bandex]][time];
+    } catch(error) {}
     return menu;
 }
